@@ -561,7 +561,8 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			fmt.Println("7777777777777777")
 			fmt.Println("7777777777777777")
 			fmt.Println("7777777777777777")
-			return errResp(ErrDecode, "msg %v: %v", msg, err)
+			log.Debug("Failed to deliver bodies", "err", err)
+			//return errResp(ErrDecode, "msg %v: %v", msg, err)
 		}
 		// Deliver them all to the downloader for queuing
 		transactions := make([][]*types.Transaction, len(request))
