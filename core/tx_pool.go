@@ -700,7 +700,7 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 	}
 
 	if tx.WhichTypes(types.Receive) {
-		timeLimit := new(big.Int).Add(pool.currentState.GetRedeemTime(from),params.TxConfig.RedeemDuration)
+		timeLimit := new(big.Int).Add(pool.currentState.GetRedeemTime(from), params.TxConfig.RedeemDuration)
 		if timeLimit.Cmp(pool.chain.CurrentBlock().Time()) > 0 {
 			return errors.New(" before receive time ")
 		}
@@ -724,6 +724,14 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 	}
 
 	if tx.WhichTypes(types.Regular) {
+		durations := strings.Split(inputStr, ":")
+		convert, err := strconv.Atoi(durations[1])
+		if err != nil {
+			return err
+		}
+		if !params.Contains(uint(convert)) {
+			return errors.New(" wrong duration of mortgagtion ")
+		}
 		if count := pool.currentState.StoreLength(netPayment); count >= params.TxConfig.RegularLimit {
 			return ErrCountLimit
 		}
@@ -1409,7 +1417,7 @@ func (t *txLookup) Remove(hash common.Hash) {
 	delete(t.all, hash)
 }
 
-func (pool *TxPool) validateVote(inputStr string,txType types.TxType) error {
+func (pool *TxPool) validateVote(inputStr string, txType types.TxType) error {
 	if strings.Contains(inputStr, "candidates") {
 		var candidatesSlice []common.Address
 		var UnqualifiedCandidatesSlice []string

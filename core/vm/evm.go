@@ -252,7 +252,8 @@ func (evm *EVM) NewCall(caller ContractRef, addr common.Address, input []byte, n
 	}
 	//2019.7.22 inb by ghy end
 	if txType == types.Regular {
-		convert, err := strconv.Atoi(inputStr)
+		durations := strings.Split(inputStr, ":")
+		convert, err := strconv.Atoi(durations[1])
 		if err != nil {
 			return nil, net, err
 		}
@@ -260,7 +261,7 @@ func (evm *EVM) NewCall(caller ContractRef, addr common.Address, input []byte, n
 		if err := evm.Context.CanMortgage(evm.StateDB, caller.Address(), value, uint(days)); err != nil {
 			return nil, net, err
 		}
-	}else if txType == types.Mortgage {
+	} else if txType == types.Mortgage {
 		if err := evm.Context.CanMortgage(evm.StateDB, caller.Address(), value, uint(days)); err != nil {
 			return nil, net, err
 		}
@@ -312,7 +313,7 @@ func (evm *EVM) NewCall(caller ContractRef, addr common.Address, input []byte, n
 	if txType == types.Vote {
 		evm.Vote(evm.StateDB, caller.Address())
 	}
-	if txType == types.Redeem  {
+	if txType == types.Redeem {
 		evm.RedeemTransfer(evm.StateDB, caller.Address(), to.Address(), value, evm.Time)
 	} else if txType == types.Regular || txType == types.Mortgage {
 		evm.MortgageTransfer(evm.StateDB, caller.Address(), to.Address(), value, uint(days), *evm.Time)
@@ -320,7 +321,7 @@ func (evm *EVM) NewCall(caller ContractRef, addr common.Address, input []byte, n
 		evm.ResetTransfer(evm.StateDB, caller.Address(), evm.Time)
 	} else if txType == types.ReceiveVoteAward {
 		evm.ReceiveVoteAward(evm.StateDB, caller.Address(), VoteAward, evm.Time) //2019.7.24 inb by ghy
-	} else if txType == types.ReceiveAward  { //2019.7.22 inb by ghy begin
+	} else if txType == types.ReceiveAward { //2019.7.22 inb by ghy begin
 		// regular mortgagtion
 		inputSlice := strings.Split(inputStr, ":")
 		if len(inputSlice) == 2 && inputSlice[0] == "ReceiveAward" {
